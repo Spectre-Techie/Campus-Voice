@@ -17,6 +17,9 @@ dotenv.config();
 
 const app: Express = express();
 
+// Trust the first proxy (Render, Railway, etc.)
+app.set('trust proxy', 1);
+
 // ---------------------
 // Global Middleware
 // ---------------------
