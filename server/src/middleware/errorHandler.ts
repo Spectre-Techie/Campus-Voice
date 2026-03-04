@@ -28,6 +28,18 @@ export function errorHandler(
     return;
   }
 
+  // ── JSON parse errors (malformed request body) ──────
+  if (err instanceof SyntaxError && 'body' in err) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: 'INVALID_JSON',
+        message: 'Request body contains invalid JSON',
+      },
+    });
+    return;
+  }
+
   const statusCode = err.statusCode || 500;
   const code = err.code || 'INTERNAL_SERVER_ERROR';
 
