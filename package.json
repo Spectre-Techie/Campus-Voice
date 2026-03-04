@@ -1,0 +1,35 @@
+{
+  "name": "campusvoice",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CampusVoice — Anonymous Feedback & Accountability Platform",
+  "scripts": {
+    "dev": "pnpm --parallel -F client -F server dev",
+    "dev:client": "pnpm -F client dev",
+    "dev:server": "pnpm -F server dev",
+    "build": "pnpm -F server build && pnpm -F client build",
+    "lint": "pnpm -r lint"
+  },
+  "keywords": [
+    "feedback",
+    "anonymous",
+    "campus",
+    "accountability"
+  ],
+  "author": "CampusVoice Team",
+  "license": "MIT",
+  "packageManager": "pnpm@10.30.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.0"
+  }
+}

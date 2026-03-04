@@ -1,0 +1,154 @@
+// =============================================
+// CampusVoice — Prisma Schema
+// Database: Supabase PostgreSQL
+// =============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────────────
+// Enums
+// ─────────────────────────────────────
+
+enum FeedbackCategory {
+  Academics
+  Facilities
+  Welfare
+  Security
+  IT_Services @map("IT Services")
+  Others
+}
+
+enum FeedbackStatus {
+  submitted
+  under_review
+  in_progress
+  resolved
+  closed
+  spam
+}
+
+enum AdminRole {
+  super_admin
+  department_admin
+  viewer
+}
+
+// ─────────────────────────────────────
+// Models
+// ─────────────────────────────────────
+
+/// Anonymous feedback submissions from students/staff
+model Feedback {
+  id                  String           @id @default(uuid())
+  tracking_id         String           @unique @db.VarChar(12)
+  category            FeedbackCategory
+  title               String           @db.VarChar(150)
+  description         String           @db.Text
+  image_url           String?          @db.Text
+  status              FeedbackStatus   @default(submitted)
+  upvote_count        Int              @default(0)
+  assigned_department String?          @db.VarChar(100)
+  priority_score      Float            @default(0)
+  resolved_at         DateTime?
+  created_at          DateTime         @default(now())
+  updated_at          DateTime         @updatedAt
+
+  // Relations
+  responses      AdminResponse[]
+  status_history StatusHistory[]
+
+  @@index([status])
+  @@index([category])
+  @@index([created_at(sort: Desc)])
+  @@index([upvote_count(sort: Desc)])
+  @@index([priority_score(sort: Desc)])
+  @@index([tracking_id])
+  @@map("feedback")
+}
+
+/// Admin users (super_admin, department_admin, viewer)
+model Admin {
+  id            String    @id @default(uuid())
+  username      String    @unique @db.VarChar(50)
+  password_hash String    @db.Text
+  display_name  String    @db.VarChar(100)
+  role          AdminRole @default(viewer)
+  department    String?   @db.VarChar(100)
+  is_active     Boolean   @default(true)
+  last_login_at DateTime?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  // Relations
+  responses      AdminResponse[]
+  status_changes StatusHistory[]
+  audit_logs     AuditLog[]
+
+  @@map("admins")
+}
+
+/// Official responses from admins on feedback
+model AdminResponse {
+  id                    String          @id @default(uuid())
+  feedback_id           String
+  admin_id              String
+  response_text         String          @db.Text
+  status_changed_to     FeedbackStatus?
+  proof_image_url       String?         @db.Text
+  expected_resolution   DateTime?
+  created_at            DateTime        @default(now())
+
+  // Relations
+  feedback Feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade)
+  admin    Admin    @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+
+  @@index([feedback_id])
+  @@index([admin_id])
+  @@map("admin_responses")
+}
+
+/// Tracks every status change on a feedback
+model StatusHistory {
+  id          String         @id @default(uuid())
+  feedback_id String
+  old_status  FeedbackStatus?
+  new_status  FeedbackStatus
+  comment     String?        @db.Text
+  changed_by  String?
+  changed_at  DateTime       @default(now())
+
+  // Relations
+  feedback Feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade)
+  admin    Admin?   @relation(fields: [changed_by], references: [id], onDelete: SetNull)
+
+  @@index([feedback_id])
+  @@index([changed_at(sort: Desc)])
+  @@map("status_history")
+}
+
+/// Admin action audit trail
+model AuditLog {
+  id         String   @id @default(uuid())
+  admin_id   String
+  action     String   @db.VarChar(100) // e.g. "login", "status_change", "respond", "delete_feedback"
+  entity     String?  @db.VarChar(50)  // e.g. "feedback", "admin"
+  entity_id  String?
+  metadata   Json?                     // Additional context (old/new values, IP, etc.)
+  created_at DateTime @default(now())
+
+  // Relations
+  admin Admin @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+
+  @@index([admin_id])
+  @@index([action])
+  @@index([created_at(sort: Desc)])
+  @@map("audit_logs")
+}
