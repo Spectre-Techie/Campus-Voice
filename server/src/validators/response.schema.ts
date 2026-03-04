@@ -22,16 +22,27 @@ export const addResponseSchema = z.object({
     .nullable(),
   expected_resolution: z
     .string()
-    .datetime({ message: 'Expected resolution must be a valid ISO date' })
     .optional()
     .nullable()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        const d = new Date(val);
+        return !isNaN(d.getTime());
+      },
+      { message: 'Expected resolution must be a valid date' },
+    )
     .refine(
       (val) => {
         if (!val) return true;
         return new Date(val) > new Date();
       },
       { message: 'Expected resolution date must be in the future' },
-    ),
+    )
+    .transform((val) => {
+      if (!val) return val;
+      return new Date(val).toISOString();
+    }),
   status_changed_to: z.enum(ALL_STATUSES).optional().nullable(),
 });
 

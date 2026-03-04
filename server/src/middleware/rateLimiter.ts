@@ -6,6 +6,7 @@ export const apiLimiter = rateLimit({
   limit: 100,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
+  validate: false,
   message: {
     success: false,
     error: {
@@ -21,6 +22,7 @@ export const submitLimiter = rateLimit({
   limit: 5,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
+  validate: false,
   message: {
     success: false,
     error: {
@@ -36,6 +38,7 @@ export const upvoteLimiter = rateLimit({
   limit: 30,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
+  validate: false,
   message: {
     success: false,
     error: {
@@ -51,6 +54,7 @@ export const loginLimiter = rateLimit({
   limit: 5,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
+  validate: false,
   message: {
     success: false,
     error: {
@@ -66,6 +70,7 @@ export const uploadLimiter = rateLimit({
   limit: 20,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
+  validate: false,
   message: {
     success: false,
     error: {

@@ -172,7 +172,8 @@ export default function FeedbackDetailPage({
         response_text: responseText.trim(),
       };
       if (proofUrl.trim()) data.proof_image_url = proofUrl.trim();
-      if (expectedResolution) data.expected_resolution = expectedResolution;
+      if (expectedResolution)
+        data.expected_resolution = new Date(expectedResolution).toISOString();
       if (responseStatusChange && responseStatusChange !== "keep")
         data.status_changed_to = responseStatusChange;
 
@@ -183,8 +184,11 @@ export default function FeedbackDetailPage({
       setResponseStatusChange("");
       toast.success("Response submitted");
       loadFeedback();
-    } catch {
-      toast.error("Failed to submit response");
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { error?: { message?: string } } } })
+          ?.response?.data?.error?.message || "Failed to submit response";
+      toast.error(msg);
     } finally {
       setResponseSaving(false);
     }
