@@ -1,10 +1,11 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
+import type { IRouter } from 'express';
 import multer from 'multer';
 import { upload } from '../middleware/upload';
 import { uploadImage } from '../controllers/upload.controller';
 import { uploadLimiter } from '../middleware/rateLimiter';
 
-const router = Router();
+const router: IRouter = Router();
 
 /**
  * POST /api/upload
