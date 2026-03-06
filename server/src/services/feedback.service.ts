@@ -77,10 +77,8 @@ export async function listFeedback(input: ListFeedbackInput) {
     const { page, limit, category, status, sort, search } = input;
     const skip = (page - 1) * limit;
 
-    // Build where clause — always exclude spam
-    const where: Prisma.FeedbackWhereInput = {
-      status: { not: 'spam' as FeedbackStatus },
-    };
+    // Build where clause
+    const where: Prisma.FeedbackWhereInput = {};
 
     if (category) {
       where.category = category as FeedbackCategory;
@@ -194,11 +192,6 @@ export async function getFeedbackByTrackingId(trackingId: string) {
     });
 
     if (!feedback) {
-      throw createError('Feedback not found', 404, 'NOT_FOUND');
-    }
-
-    // Don't expose spam feedback publicly
-    if (feedback.status === 'spam') {
       throw createError('Feedback not found', 404, 'NOT_FOUND');
     }
 

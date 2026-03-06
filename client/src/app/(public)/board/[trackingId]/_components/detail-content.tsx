@@ -137,6 +137,16 @@ export function DetailContent() {
 
   return (
     <div className="space-y-6">
+      {/* Spam notice */}
+      {feedback.status === "spam" && (
+        <div className="flex items-center gap-2 rounded-xl border border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-5 py-3">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
+          <p className="text-sm font-medium text-red-700 dark:text-red-300">
+            This feedback has been flagged as spam by an administrator.
+          </p>
+        </div>
+      )}
+
       {/* Back navigation */}
       <Button variant="ghost" size="sm" asChild className="gap-2 rounded-lg text-muted-foreground hover:text-foreground">
         <Link href="/board">

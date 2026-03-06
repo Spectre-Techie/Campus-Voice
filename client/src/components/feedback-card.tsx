@@ -32,9 +32,19 @@ function timeAgo(dateStr: string): string {
 export function FeedbackCard({ feedback }: FeedbackCardProps) {
   const categoryConfig = CATEGORY_CONFIG[feedback.category as Category];
   const CategoryIcon = categoryConfig?.icon;
+  const isSpam = feedback.status === "spam";
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+    <article className={cn(
+      "group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg",
+      isSpam && "opacity-60 border-red-300 dark:border-red-800"
+    )}>
+      {isSpam && (
+        <div className="bg-red-50 dark:bg-red-950/40 border-b border-red-200 dark:border-red-800 px-5 py-1.5 flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+          <span className="text-xs font-medium text-red-700 dark:text-red-300">This feedback has been flagged as spam by an admin</span>
+        </div>
+      )}
       <div className="p-5 sm:p-6">
         {/* Top row: category + status */}
         <div className="mb-3.5 flex items-start justify-between gap-3">

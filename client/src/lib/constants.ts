@@ -71,6 +71,7 @@ export const STATUSES = [
   "in_progress",
   "resolved",
   "closed",
+  "spam",
 ] as const;
 
 export type Status = (typeof STATUSES)[number];
@@ -108,6 +109,12 @@ export const STATUS_CONFIG: Record<
     color: "text-gray-700 dark:text-gray-300",
     bgColor: "bg-gray-100 dark:bg-gray-800/50",
     dotColor: "bg-gray-500",
+  },
+  spam: {
+    label: "Flagged as Spam",
+    color: "text-red-700 dark:text-red-300",
+    bgColor: "bg-red-100 dark:bg-red-900/30",
+    dotColor: "bg-red-500",
   },
 };
 
