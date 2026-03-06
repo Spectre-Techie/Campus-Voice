@@ -16,6 +16,7 @@ const PUBLIC_STATUSES = [
   'in_progress',
   'resolved',
   'closed',
+  'spam',
 ] as const;
 
 const SORT_OPTIONS = [

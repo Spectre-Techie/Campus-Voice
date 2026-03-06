@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-const CACHE_NAME = "campusvoice-v1";
+const CACHE_NAME = "campusvoice-v2";
 
 // Assets to pre-cache on install
 const PRECACHE_ASSETS = [
