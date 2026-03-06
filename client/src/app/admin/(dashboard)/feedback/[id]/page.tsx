@@ -144,12 +144,11 @@ export default function FeedbackDetailPage({
 
   async function handleToggleSpam() {
     if (!feedback) return;
+    const wasSpam = feedback.status === "spam";
     try {
-      const updated = await adminToggleSpam(id, !feedback.is_spam);
-      setFeedback(updated);
-      toast.success(
-        feedback.is_spam ? "Unflagged as spam" : "Flagged as spam"
-      );
+      await adminToggleSpam(id, !wasSpam);
+      toast.success(wasSpam ? "Unflagged as spam" : "Flagged as spam");
+      loadFeedback();
     } catch {
       toast.error("Failed to update spam flag");
     }
@@ -282,7 +281,7 @@ export default function FeedbackDetailPage({
             <span className="font-mono">{feedback.tracking_id}</span>
             <span>·</span>
             <span>{formatDate(feedback.created_at)}</span>
-            {feedback.is_spam && (
+            {feedback.status === "spam" && (
               <Badge variant="destructive" className="text-[10px]">
                 SPAM
               </Badge>
@@ -359,7 +358,7 @@ export default function FeedbackDetailPage({
               size="sm"
               onClick={handleToggleSpam}
             >
-              {feedback.is_spam ? (
+              {feedback.status === "spam" ? (
                 <>
                   <FlagOff className="mr-1 h-4 w-4" /> Unflag
                 </>

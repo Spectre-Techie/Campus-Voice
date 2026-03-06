@@ -106,9 +106,10 @@ export default function FeedbackManagementPage() {
   }, [searchInput]);
 
   async function handleToggleSpam(item: AdminFeedbackItem) {
+    const isSpam = item.status === "spam";
     try {
-      await adminToggleSpam(item.id, !item.is_spam);
-      toast.success(item.is_spam ? "Unflagged as spam" : "Flagged as spam");
+      await adminToggleSpam(item.id, !isSpam);
+      toast.success(isSpam ? "Unflagged as spam" : "Flagged as spam");
       fetchData();
     } catch {
       toast.error("Failed to update spam status");
@@ -230,7 +231,7 @@ export default function FeedbackManagementPage() {
                   <Link
                     key={item.id}
                     href={`/admin/feedback/${item.id}`}
-                    className={`block rounded-xl border bg-card p-4 transition-colors hover:bg-accent/50 ${item.is_spam ? "opacity-50" : ""}`}
+                    className={`block rounded-xl border bg-card p-4 transition-colors hover:bg-accent/50 ${item.status === "spam" ? "opacity-50" : ""}`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
@@ -257,7 +258,7 @@ export default function FeedbackManagementPage() {
                             </DropdownMenuItem>
                             {admin?.role !== "viewer" && (
                               <DropdownMenuItem onClick={() => handleToggleSpam(item)}>
-                                {item.is_spam ? (
+                                {item.status === "spam" ? (
                                   <><FlagOff className="mr-2 h-4 w-4" />Unflag Spam</>
                                 ) : (
                                   <><Flag className="mr-2 h-4 w-4" />Flag as Spam</>
@@ -283,7 +284,7 @@ export default function FeedbackManagementPage() {
                           <span className="text-xs font-medium">{statusConfig.label}</span>
                         </div>
                       )}
-                      {item.is_spam && (
+                      {item.status === "spam" && (
                         <Badge variant="destructive" className="text-[10px]">SPAM</Badge>
                       )}
                       <span className="ml-auto text-xs tabular-nums text-muted-foreground">
@@ -316,7 +317,7 @@ export default function FeedbackManagementPage() {
                     return (
                       <TableRow
                         key={item.id}
-                        className={`cursor-pointer ${item.is_spam ? "opacity-50" : ""}`}
+                        className={`cursor-pointer ${item.status === "spam" ? "opacity-50" : ""}`}
                         onClick={() => router.push(`/admin/feedback/${item.id}`)}
                       >
                         <TableCell className="font-mono text-xs">
@@ -327,7 +328,7 @@ export default function FeedbackManagementPage() {
                             <p className="truncate text-sm font-medium">
                               {item.title}
                             </p>
-                            {item.is_spam && (
+                            {item.status === "spam" && (
                               <Badge variant="destructive" className="mt-1 text-[10px]">
                                 SPAM
                               </Badge>
@@ -383,7 +384,7 @@ export default function FeedbackManagementPage() {
                                 <DropdownMenuItem
                                   onClick={() => handleToggleSpam(item)}
                                 >
-                                  {item.is_spam ? (
+                                  {item.status === "spam" ? (
                                     <>
                                       <FlagOff className="mr-2 h-4 w-4" />
                                       Unflag Spam

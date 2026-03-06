@@ -265,12 +265,11 @@ export async function adminAssignDepartment(
 export async function adminToggleSpam(
   id: string,
   spam: boolean
-): Promise<AdminFeedbackDetail> {
-  const res = await adminApi.patch<ApiSuccess<AdminFeedbackDetail>>(
+): Promise<void> {
+  await adminApi.patch(
     `/feedback/${id}/spam`,
     { spam }
   );
-  return res.data.data;
 }
 
 // ─── Responses API ──────────────────────────────────────
